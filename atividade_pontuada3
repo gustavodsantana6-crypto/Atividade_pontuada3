@@ -1,0 +1,102 @@
+import os
+
+# --- FUNÇÕES DE APOIO ---
+
+def limpar_tela():
+    # 'cls' para Windows e 'clear' para Linux/Mac
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def cadastrar_avioes(lista_avioes):
+    print("\n--- CADASTRO DE AVIÕES ---")
+    for i in range(4):
+        id_aviao = input(f"Digite o ID do Avião {i+1}: ").strip().upper()
+        lista_avioes[i] = id_aviao
+    print("Aviões cadastrados com sucesso!")
+
+def cadastrar_assentos(lista_avioes, lista_assentos):
+    if not any(lista_avioes):
+        print("\n[ERRO] Cadastre os aviões primeiro!")
+        return
+    
+    print("\n--- CADASTRO DE ASSENTOS ---")
+    for i in range(4):
+        qtd = int(input(f"Qtd de assentos para o avião {lista_avioes[i]}: "))
+        lista_assentos[i] = qtd
+    print("Assentos definidos!")
+
+def realizar_reserva(lista_avioes, lista_assentos, lista_reservas):
+    if len(lista_reservas) >= 20:
+        print("\n[LIMITE] Sistema atingiu o máximo de 20 reservas.")
+        return
+
+    id_busca = input("\nID do Avião para reserva: ").strip().upper()
+    
+    if id_busca in lista_avioes:
+        idx = lista_avioes.index(id_busca)
+        if lista_assentos[idx] > 0:
+            nome = input("Nome do Passageiro: ").strip().title()
+            lista_reservas.append({"aviao": id_busca, "nome": nome})
+            lista_assentos[idx] -= 1
+            print(f"Reserva de {nome} realizada!")
+        else:
+            print("Não há assentos disponíveis para este avião!")
+    else:
+        print("Avião não encontrado!")
+
+def consultar_por_aviao(lista_reservas):
+    id_busca = input("\nConsultar qual avião? ").strip().upper()
+    encontrados = [r['nome'] for r in lista_reservas if r['aviao'] == id_busca]
+    
+    if encontrados:
+        print(f"Passageiros no {id_busca}: {', '.join(encontrados)}")
+    else:
+        print("Nenhuma reserva encontrada para este avião.")
+
+def consultar_por_passageiro(lista_reservas):
+    nome_busca = input("\nNome do Passageiro: ").strip().title()
+    voos = [r['aviao'] for r in lista_reservas if r['nome'] == nome_busca]
+    
+    if voos:
+        print(f"O passageiro {nome_busca} está nos aviões: {', '.join(voos)}")
+    else:
+        print("Nenhuma reserva para este passageiro.")
+
+# --- PROGRAMA PRINCIPAL ---
+
+def main():
+    avioes = [""] * 4
+    assentos = [0] * 4
+    reservas = []
+
+    while True:
+        print("\n" + "="*30)
+        print("SISTEMA DE AEROPORTO")
+        print("="*30)
+        print("1: Cadastrar Aviões")
+        print("2: Cadastrar Assentos")
+        print("3: Reservar Passagem")
+        print("4: Consultar por Avião")
+        print("5: Consultar por Passageiro")
+        print("6: Sair")
+        
+        opcao = input("\nEscolha uma opção: ")
+
+        if opcao == "1":
+            cadastrar_avioes(avioes)
+        elif opcao == "2":
+            cadastrar_assentos(avioes, assentos)
+        elif opcao == "3":
+            realizar_reserva(avioes, assentos, reservas)
+        elif opcao == "4":
+            consultar_por_aviao(reservas)
+        elif opcao == "5":
+            consultar_por_passageiro(reservas)
+        elif opcao == "6":
+            print("Saindo do sistema...")
+            break
+        else:
+            print("Opção inválida!")
+
+# Executa o programa
+if __name__ == "__main__":
+    main()
